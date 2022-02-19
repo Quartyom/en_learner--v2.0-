@@ -41,6 +41,7 @@ def new_word_com(en_word, *args, to_show_result = True):
             if to_show_result: print("added")
         else:
             if to_show_result: print("Already exists")
+            menu_parser.set_result("error", "Already exists")
     else:
         if to_show_result: print("Dodger")
 
@@ -54,12 +55,21 @@ def delete_word_com(en_word, to_show_result = True):
         if to_show_result: print("Not found")
 
 @menu_parser.method("check", 1)
-def check_word_com(en_word):
-
+def check_word_com(en_word, to_show_when_to_repeat = True):
     if en_word in Words.data:
         print(Words.data[en_word])
+
+        if to_show_when_to_repeat:
+            time_label = Words.data[en_word]["time_label"]
+            repeated_times = Words.data[en_word]["repeated_times"]
+            when = time_label + Repetition_intervals.data[repeated_times] - qu_datetime.now()
+            if when > 0:
+                when_formatted = qu_datetime.seconds_to_form(when)
+                print("Следующее повторение через", when_formatted)
+            else:
+                print("Слово пора повторять")
     else:
-        print("Not found")
+        print("WordNot found")
 
 @menu_parser.method("find", 1)
 def find_word_com(en_word):
@@ -84,12 +94,15 @@ def reset_word_com(en_word):
 
 @menu_parser.method("edit", 2, 5)
 def edit_word_com(prev_en_word, new_en_word = "1", *args):
-    if new_en_word == "1": new_en_word = prev_en_word
-
     if prev_en_word in Words.data:
         prev_word = Words.data[prev_en_word]
         prev_word_attrs = libs.qu_words.copy_word_attrs(prev_word)
         new_word_attrs = libs.qu_words.extend_args(args, len(prev_word_attrs), value = "1")
+
+        if new_en_word == "1": new_en_word = prev_en_word
+        if new_en_word == "0" or new_word_attrs[0] == "0":
+            print("Так делать запрещено")
+            return
 
         for index in range(len(prev_word_attrs)):
             if new_word_attrs[index] == "1":
@@ -101,7 +114,7 @@ def edit_word_com(prev_en_word, new_en_word = "1", *args):
 
         new_word_com(new_en_word, *new_word_attrs, to_show_result = False)
 
-        check_word_com(new_en_word)
+        check_word_com(new_en_word, to_show_when_to_repeat = False)
         inp = input('Input "ok" to accept: ').strip()
         if inp == "ok":
             delete_word_com(prev_en_word, to_show_result = False)
@@ -124,7 +137,7 @@ def locale_com(*args):
 
 @menu_parser.method("donate", 0)
 def locale_com(*args):
-    print("No implementation provided")
+    print("Maybe in the next version")
 
 @menu_parser.method("about", 0)
 def locale_com(*args):
@@ -177,6 +190,12 @@ def run():
             continue
 
         # если меняется сцена
-        if result_type == "change_scene":
+        elif result_type == "change_scene":
             scene_controller.set_result(result_type, result_message)
             return
+
+        elif result_type == "success":
+            pass
+
+        else:
+            if result_message: print(result_message)

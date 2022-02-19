@@ -13,8 +13,11 @@ while True:
         break
 
     # если меняется сцена
-    if result_type == "change_scene":
+    elif result_type == "change_scene":
         if result_message == "exit": break
         current_scene = result_message
+
+    else:
+        if result_message: print(result_message)
 
 input("Application is finished")

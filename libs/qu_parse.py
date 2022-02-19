@@ -82,5 +82,5 @@ class Qu_parse:
         if not to_save: self._method_to_method_data = None
         return outp
 
-    def set_method_to_method_data(self, data):
+    def _set_method_to_method_data(self, data):
         self._method_to_method_data = data

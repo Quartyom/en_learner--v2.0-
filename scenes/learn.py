@@ -27,7 +27,7 @@ def help_com(*args):
 def skip_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
     Words.data[word]["time_label"] = qu_datetime.now()
-    Word.save()
+    Words.save()
 
 @learn_parser.method("reset", 0)
 def edit_com(*args):
@@ -114,6 +114,8 @@ def run():
 
     if cn_word_to_ln > 0:
         print("Words to learn:", cn_word_to_ln)
+    else:
+        print("Пока повторять нечего")
 
     is_this_sudden_repeat = False
     is_sudden_repeat_available = True
@@ -154,11 +156,14 @@ def run():
                 continue
 
             # если меняется сцена
-            if result_type == "change_scene":
+            elif result_type == "change_scene":
                 scene_controller.set_result(result_type, result_message)
                 return
 
+            else:
+                if result_message: print(result_message)
+
         cn_word_to_ln = how_much_to_learn()
 
-
+    print("Слова закончились")
     scene_controller.set_result("change_scene", "menu")
