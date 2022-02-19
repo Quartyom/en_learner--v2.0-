@@ -1,0 +1,2 @@
+without arguments: shows the list of available commands
+help [object]: shows the description of object
