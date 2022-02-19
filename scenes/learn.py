@@ -15,13 +15,15 @@ def help_com(*args):
         for k in learn_parser._methods:
             print(k)
 
-        input("You may also use help help")
+        print("You may also use help help")
 
     else:
         descr = libs.qu_files.get(f"rsc/commands_descriptions/{args[0]}_learn.txt")
         if not descr: descr = libs.qu_files.get(f"rsc/commands_descriptions/{args[0]}.txt")
         if not descr: descr = libs.qu_files.get(f"rsc/commands_descriptions/no_description.txt")
         print(descr[:-1])
+
+    learn_parser.set_result("ask_input_again", "from help")
 
 @learn_parser.method("skip", 0)
 def skip_com(*args):
@@ -36,17 +38,13 @@ def edit_com(*args):
 
 @learn_parser.method("edit", 0, 4)
 def edit_com(*args):
-    data, foo = learn_parser._get_method_to_method_data()
-    menu_parser.prepare(f"edit {data}")
+    word, foo = learn_parser._get_method_to_method_data()
+    menu_parser.prepare(f"edit {word} {' '.join(args)}")
 
 @learn_parser.method("del", 0)
 def del_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
     menu_parser.prepare(f"del {word}")
-
-@learn_parser.method("test_learn")
-def test_com(*args):
-    print("Something uniq from learn mode")
 
 @learn_parser.method("menu", 0)
 def menu_com(*args):
@@ -93,6 +91,11 @@ def exit_com(*args):
 
     Userdata.save()
 
+@learn_parser.method("now", 0)
+def now_com():
+    print(qu_datetime.now())
+    learn_parser.set_result("ask_input_again", "from help")
+
 def should_to_repeat_this_word(word_data):
     time_label = word_data["time_label"]
     rep_times = word_data["repeated_times"]
@@ -116,6 +119,8 @@ def run():
         print("Words to learn:", cn_word_to_ln)
     else:
         print("Пока повторять нечего")
+        scene_controller.set_result("change_scene", "menu")
+        return
 
     is_this_sudden_repeat = False
     is_sudden_repeat_available = True
@@ -143,25 +148,30 @@ def run():
             else:
                 continue
 
-            learn_parser._method_to_method_data = en_word, is_this_sudden_repeat
-            learn_parser.prepare()
-            result_type, result_message = learn_parser.get_result()
+            while True: # внизу этого цикла есть break, на новую итерацию заходит только continue
+                learn_parser._method_to_method_data = en_word, is_this_sudden_repeat
+                learn_parser.prepare()
+                result_type, result_message = learn_parser.get_result()
 
-            # если неуспешное выполнение
-            if result_type == "error":
-                if result_message == "empty_input":
-                    pass
+                # если неуспешное выполнение
+                if result_type == "error":
+                    if result_message == "empty_input":
+                        pass
+                    else:
+                        print(result_message)
+
+                # если меняется сцена
+                elif result_type == "change_scene":
+                    scene_controller.set_result(result_type, result_message)
+                    return
+
+                elif result_type == "ask_input_again":
+                    continue
+
                 else:
-                    print(result_message)
-                continue
+                    if result_message: print(result_message)
 
-            # если меняется сцена
-            elif result_type == "change_scene":
-                scene_controller.set_result(result_type, result_message)
-                return
-
-            else:
-                if result_message: print(result_message)
+                break
 
         cn_word_to_ln = how_much_to_learn()
 

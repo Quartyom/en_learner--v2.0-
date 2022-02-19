@@ -23,7 +23,6 @@ def help_com(*args):
 @viewdict_parser.method("edit", 0, 4)
 def edit_com(*args):
     word = viewdict_parser._get_method_to_method_data()
-    print("raw:", f"edit {word} {' '.join(args)}")
     menu_parser.prepare(f"edit {word} {' '.join(args)}")
 
 @viewdict_parser.method("del", 0)
@@ -31,21 +30,17 @@ def del_com(*args):
     word = viewdict_parser._get_method_to_method_data()
     menu_parser.prepare(f"del {word}")
 
-@viewdict_parser.method("test_viewdict")
-def test_com(*args):
-    print("Something uniq from viewdict")
-
 @viewdict_parser.method("menu", 0)
 def menu_com(*args):
     viewdict_parser.set_result("change_scene", "menu")
 
 @viewdict_parser.method("learn", 0)
 def learn_com(*args):
-    viewdict_parser.set_message("change_scene", "learn")
+    viewdict_parser.set_result("change_scene", "learn")
 
 @viewdict_parser.method("exit")
 def exit_com(*args):
-    viewdict_parser.set_message("change_scene", "exit")
+    viewdict_parser.set_result("change_scene", "exit")
 
 @scene_controller.method("viewdict")
 def run():

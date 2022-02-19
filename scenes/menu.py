@@ -127,7 +127,6 @@ def edit_word_com(prev_en_word, new_en_word = "1", *args):
 
 @menu_parser.method("now", 0)
 @viewdict_parser.method("now", 0)
-@learn_parser.method("now", 0)
 def now_com():
     print(qu_datetime.now())
 
