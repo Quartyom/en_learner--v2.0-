@@ -1,0 +1,8 @@
+The en_learner application allows you to record foreign words for
+further study and to attach the translation, transcription and notes to them.
+The method of studying the Hermann Ebbinghaus is used.
+The app is developed by indie developer on a voluntary basis.
+If you want to help the development of the project, you can contact
+the developer about bugs [quartyom@gmail.com]
+Or donate [a link will appear here later]
+Developer apologizes in advance for grammar mistakes.

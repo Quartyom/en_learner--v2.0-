@@ -32,19 +32,22 @@ def skip_com(*args):
     Words.save()
 
 @learn_parser.method("reset", 0)
-def edit_com(*args):
+def reset_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
     menu_parser.prepare(f"reset {word}")
+    learn_parser._result = menu_parser.get_result()  # learn parser should know about execution result
 
 @learn_parser.method("edit", 0, 4)
 def edit_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
     menu_parser.prepare(f"edit {word} {' '.join(args)}")
+    learn_parser._result = menu_parser.get_result()
 
 @learn_parser.method("del", 0)
 def del_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
     menu_parser.prepare(f"del {word}")
+    learn_parser._result = menu_parser.get_result()
 
 @learn_parser.method("menu", 0)
 def menu_com(*args):
@@ -58,12 +61,12 @@ def viewdict_com(*args):
 def exit_com(*args):
     learn_parser.set_result("change_scene", "exit")
 
-@learn_parser.method("ok")  # осторожно с сохранением данных
-def exit_com(*args):
+@learn_parser.method("ok")  # attention: userdata save is in the end
+def ok_com(*args):
     en_word, is_this_sudden_repeat = learn_parser._get_method_to_method_data()
 
     if is_this_sudden_repeat:
-        print("unavilable")
+        learn_parser.set_result("error", "unavilable")
         return
 
     if not args:
@@ -71,30 +74,37 @@ def exit_com(*args):
         Words.data[en_word]["time_label"] = qu_datetime.now()
         # word is learnt
         if Words.data[en_word]["repeated_times"] >= len(Repetition_intervals.data):
-            print("Поздравляю, вы выучили слово")
-            print("Оно будет удалено, если его не сбросить")
-            inp = input("Чтобы сбросить, введите reset: ").strip()
+            print("congrats, you\'ve learned this word")
+            print("it will be deleted, if you wont reset it")
+            inp = input("input reset if you wish: ").strip()
 
             if inp == "reset":
                 menu_parser.prepare(f"reset {en_word}")
+                learn_parser._result = menu_parser.get_result()
             else:
                 Userdata.data["words_learned"] += 1
                 menu_parser.prepare(f"del {en_word}")
+                learn_parser._result = menu_parser.get_result()
 
     elif args == ("ok", "ok"):
-        print("Слово помечено, как выученное")
-        Userdata.data["words_learned"] += 1
-        menu_parser.prepare(f"del {en_word}")
+        key = str(random.randint(1000,9999))
+        print("do you wish to mark this word as learned and to delete it?")
+        if input(f'input "{key}": ') == key:
+            Userdata.data["words_learned"] += 1
+            menu_parser.prepare(f"del {en_word}")
+            learn_parser._result = menu_parser.get_result()
+        else:
+            learn_parser.set_result("success", "cancelled")
 
     else:
-        learn_parser.set_result("error", "wrong_number_of_arguments")
+        learn_parser.set_result("error", "invalid arguments")
 
     Userdata.save()
 
 @learn_parser.method("now", 0)
 def now_com():
     print(qu_datetime.now())
-    learn_parser.set_result("ask_input_again", "from help")
+    learn_parser.set_result("ask_input_again", "from now")
 
 def should_to_repeat_this_word(word_data):
     time_label = word_data["time_label"]
@@ -116,9 +126,9 @@ def run():
     cn_word_to_ln = how_much_to_learn()
 
     if cn_word_to_ln > 0:
-        print("Words to learn:", cn_word_to_ln)
+        print("words to learn:", cn_word_to_ln)
     else:
-        print("Пока повторять нечего")
+        print("its nothing to repeat so far")
         scene_controller.set_result("change_scene", "menu")
         return
 
@@ -126,8 +136,7 @@ def run():
     is_sudden_repeat_available = True
 
     while cn_word_to_ln > 0:
-        # получить список слов (ключей словаря)
-        words_list = list(Words.data.keys())
+        words_list = list(Words.data.keys()) # to get & shuffle words list
         random.shuffle(words_list)
 
         for en_word in words_list:
@@ -142,25 +151,24 @@ def run():
             elif is_sudden_repeat_available and random.randint(1,8) == 8:
                 is_this_sudden_repeat = True
                 is_sudden_repeat_available = False
-                print("This is sudden repeatition")
+                print("this is sudden repeatition")
                 libs.qu_words.show_word(en_word, word_data, to_ask_input = False)
 
             else:
                 continue
 
-            while True: # внизу этого цикла есть break, на новую итерацию заходит только continue
+            while True: # there is break in the end, new iteration is on continue only
                 learn_parser._method_to_method_data = en_word, is_this_sudden_repeat
                 learn_parser.prepare()
                 result_type, result_message = learn_parser.get_result()
 
-                # если неуспешное выполнение
                 if result_type == "error":
-                    if result_message == "empty_input":
+                    if result_message == "empty input":
                         pass
                     else:
                         print(result_message)
+                        continue
 
-                # если меняется сцена
                 elif result_type == "change_scene":
                     scene_controller.set_result(result_type, result_message)
                     return
@@ -175,5 +183,5 @@ def run():
 
         cn_word_to_ln = how_much_to_learn()
 
-    print("Слова закончились")
+    print("words are over")
     scene_controller.set_result("change_scene", "menu")
