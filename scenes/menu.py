@@ -7,19 +7,21 @@ from inits.qu_json_init import *        # new()
 from inits.scene_controller  import *   # run()
 from inits.scene_parsers_init import *
 from inits.userdata import *
+from inits.qu_locale_init import *
 
 @menu_parser.method("help", 0, 1)
 def help_com(*args):
     if not args:
-        print("Commands avialable")
+        print(Locale.get("commands avialable"))
         for k in menu_parser._methods:
             print(k)
-        print("You may also use help help")
+        print(Locale.get("you may also use help help"))
 
     else:
-        descr = libs.qu_files.get(f"rsc/commands_descriptions/{args[0]}_menu.txt")
-        if not descr: descr = libs.qu_files.get(f"rsc/commands_descriptions/{args[0]}.txt")
-        if not descr: descr = libs.qu_files.get(f"rsc/commands_descriptions/no_description.txt")
+        locale_path = Userdata.data["locale"]
+        descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}_menu.txt")
+        if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}.txt")
+        if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/no_description.txt")
         print(descr[:-1])
 
 @menu_parser.method("new", 2, 4)
@@ -62,9 +64,9 @@ def _check_word(en_word_dict, to_show_when_to_repeat = True):
         when = time_label + Repetition_intervals.data[repeated_times] - qu_datetime.now()
         if when > 0:
             when_formatted = qu_datetime.seconds_to_form(when)
-            print("the next repetition is in", when_formatted)
+            print(Locale.get("the next repetition is in"), when_formatted)
         else:
-            print("its time to repeat it")
+            print(Locale.get("its time to repeat it"))
 
 @menu_parser.method("check", 1)
 def check_word_com(en_word):
@@ -124,7 +126,7 @@ def edit_word_com(prev_en_word, new_en_word = "1", *args):
         word_dict = libs.qu_words.build_word_attrs(new_word_attrs)
         _check_word(word_dict, to_show_when_to_repeat = False)  # shows edited word in advance
 
-        inp = input('input "ok" to accept: ').strip()
+        inp = input(Locale.get('input "ok" to accept: ')).strip()
         if inp == "ok":
             delete_word_com(prev_en_word)
             new_word_com(new_en_word, *new_word_attrs)
@@ -138,9 +140,29 @@ def edit_word_com(prev_en_word, new_en_word = "1", *args):
 def now_com():
     print(qu_datetime.now())
 
+@menu_parser.method("reload", 0)
+def reload_com():
+    Words.load()
+    Userdata.load()
+    Locale.load()
+    menu_parser.set_result("success", "resources are reloaded")
+
+
 @menu_parser.method("locale", 1)
-def locale_com(*args):
-    menu_parser.set_result("error", "no implementation provided")
+def locale_com(arg):
+    if not os.path.exists(f"rsc/{arg}"):
+        menu_parser.set_result("error", "no such locale")
+    elif not os.path.exists(f"rsc/{arg}/tags.json"):
+        menu_parser.set_result("error", "no tags found")
+    elif not os.path.exists(f"rsc/{arg}/commands_descriptions"):
+        menu_parser.set_result("error", "commands descriptions are not found")
+    elif not os.path.exists(f"rsc/{arg}/commands_descriptions/no_description.txt"):
+        menu_parser.set_result("error", "file no_description.txt is not found")
+    else:
+        Userdata.data["locale"] = arg
+        Userdata.save()
+        Locale.load()
+        menu_parser.set_result("success", "locale changed")
 
 @menu_parser.method("donate", 0)
 def donate_com(*args):
@@ -161,9 +183,9 @@ def stats_com(*args):
     _data = Userdata.data
     usage_time = qu_datetime.now() - _data["the_first_launch"]
     usage_time_formatted = qu_datetime.seconds_to_form(usage_time)
-    print("you\'re using app for", usage_time_formatted)
-    print("words learned:", _data["words_learned"])
-    print("words are being learned:", len(Words.data))
+    print(Locale.get("you\'re using app for"), usage_time_formatted)
+    print(Locale.get("words learned:"), _data["words_learned"])
+    print(Locale.get("words are being learned:"), len(Words.data))
 
 @menu_parser.method("clear", 0)
 @learn_parser.method("clear", 0)
@@ -186,7 +208,7 @@ def exit_com(*args):
 @scene_controller.method("menu")
 def run():
     if scene_controller._get_method_to_method_data() != "dont show greetings":
-        print("you are in menu")
+        print(Locale.get("you are in menu"))
     while True:
         menu_parser.prepare()
         result_type, result_message = menu_parser.get_result()
@@ -195,7 +217,7 @@ def run():
             if result_message == "empty input":
                 pass
             else:
-                print(result_message)
+                print(Locale.get(result_message))
             continue
 
         # transfer data to scene controller to switch scene
@@ -204,9 +226,9 @@ def run():
             return
 
         elif result_type == "success":
-            if result_message: print(result_message)
+            if result_message: print(Locale.get(result_message))
 
         # are not supposed to be executed
         else:
             print(result_type)
-            if result_message: print(result_message)
+            if result_message: print(Locale.get(result_message))

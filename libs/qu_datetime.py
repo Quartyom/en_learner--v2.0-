@@ -15,3 +15,6 @@ def seconds_to_form(seconds):
         return f"{minutes}min, {seconds - minutes*60}sec"
     else:
         return f"{seconds}sec"
+
+def form_to_seconds(days = 0, hours = 0, minutes = 0, secs = 0):
+    return ((((days) * 24 + hours) * 60 + minutes) * 60 + secs)

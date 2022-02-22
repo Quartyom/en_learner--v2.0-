@@ -4,21 +4,22 @@ import libs.qu_datetime as qu_datetime
 from inits.scene_controller import *
 from inits.scene_parsers_init import *
 from inits.qu_json_init import *
+from inits.userdata import *
+from inits.qu_locale_init import *
 
 @viewdict_parser.method("help", 0, 1)
 def help_com(*args):
     if not args:
-        print("Commands avialable")
-
+        print(Locale.get("commands avialable"))
         for k in viewdict_parser._methods:
             print(k)
-
-        print("You may also use help help")
+        print(Locale.get("you may also use help help"))
 
     else:
-        descr = libs.qu_files.get(f"rsc/commands_descriptions/{args[0]}_viewdict.txt")
-        if not descr: descr = libs.qu_files.get(f"rsc/commands_descriptions/{args[0]}.txt")
-        if not descr: descr = libs.qu_files.get(f"rsc/commands_descriptions/no_description.txt")
+        locale_path = Userdata.data["locale"]
+        descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}_viewdict.txt")
+        if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}.txt")
+        if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/no_description.txt")
         print(descr[:-1])
 
     viewdict_parser.set_result("ask_input_again", "from help")
@@ -52,9 +53,15 @@ def now_com():
     print(qu_datetime.now())
     viewdict_parser.set_result("ask_input_again", "from now")
 
+@viewdict_parser.method("reload", 0)
+def reload_com():
+    menu_parser.prepare("reload")
+    print(Locale.get("resources are reloaded"))
+    viewdict_parser.set_result("ask_input_again", "from reload")
+
 @scene_controller.method("viewdict")
 def run():
-    print("words in dictionary:", len(Words.data))
+    print(Locale.get("words in dictionary:"), len(Words.data))
 
     current_words_list = list(Words.data.keys())
     for en_word in current_words_list:
@@ -70,7 +77,7 @@ def run():
                 if result_message == "empty input":
                     pass
                 else:
-                    print(result_message)
+                    print(Locale.get(result_message))
                     continue
 
             elif result_type == "change_scene":
@@ -81,9 +88,9 @@ def run():
                 continue
 
             else:
-                if result_message: print(result_message)
+                if result_message: print(Locale.get(result_message))
 
             break
 
-    print("words are over")
+    print(Locale.get("words are over"))
     scene_controller.set_result("change_scene", "menu")

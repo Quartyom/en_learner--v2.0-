@@ -2,4 +2,4 @@ Adds a new word in the dictionary
 [foreign word] [translation] [transcription] [notes]
 Arguments count: from 2 to 4
 Use _ instead of spaces inside arguments
-Use 0 to skip an argument (the first one is indispensable)
+Use 0 to skip an argument (the first two are indispensable)

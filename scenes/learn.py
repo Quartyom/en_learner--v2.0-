@@ -6,21 +6,21 @@ from inits.scene_controller import *
 from inits.scene_parsers_init import *
 from inits.qu_json_init import *
 from inits.userdata import *
+from inits.qu_locale_init import *
 
 @learn_parser.method("help", 0, 1)
 def help_com(*args):
     if not args:
-        print("Commands avialable")
-
+        print(Locale.get("commands avialable"))
         for k in learn_parser._methods:
             print(k)
-
-        print("You may also use help help")
+        print(Locale.get("you may also use help help"))
 
     else:
-        descr = libs.qu_files.get(f"rsc/commands_descriptions/{args[0]}_learn.txt")
-        if not descr: descr = libs.qu_files.get(f"rsc/commands_descriptions/{args[0]}.txt")
-        if not descr: descr = libs.qu_files.get(f"rsc/commands_descriptions/no_description.txt")
+        locale_path = Userdata.data["locale"]
+        descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}_learn.txt")
+        if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}.txt")
+        if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/no_description.txt")
         print(descr[:-1])
 
     learn_parser.set_result("ask_input_again", "from help")
@@ -28,7 +28,7 @@ def help_com(*args):
 @learn_parser.method("skip", 0)
 def skip_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
-    Words.data[word]["time_label"] = qu_datetime.now()
+    Words.data[word]["time_label"] = qu_datetime.now() + 600
     Words.save()
 
 @learn_parser.method("reset", 0)
@@ -66,7 +66,7 @@ def ok_com(*args):
     en_word, is_this_sudden_repeat = learn_parser._get_method_to_method_data()
 
     if is_this_sudden_repeat:
-        learn_parser.set_result("error", "unavilable")
+        learn_parser.set_result("error", Locale.get("unavilable"))
         return
 
     if not args:
@@ -74,9 +74,9 @@ def ok_com(*args):
         Words.data[en_word]["time_label"] = qu_datetime.now()
         # word is learnt
         if Words.data[en_word]["repeated_times"] >= len(Repetition_intervals.data):
-            print("congrats, you\'ve learned this word")
-            print("it will be deleted, if you wont reset it")
-            inp = input("input reset if you wish: ").strip()
+            print(Locale.get("congrats, youve learned this word"))
+            print(Locale.get("it will be deleted, if you wont reset it"))
+            inp = input(Locale.get("input reset if you wish: ")).strip()
 
             if inp == "reset":
                 menu_parser.prepare(f"reset {en_word}")
@@ -88,7 +88,7 @@ def ok_com(*args):
 
     elif args == ("ok", "ok"):
         key = str(random.randint(1000,9999))
-        print("do you wish to mark this word as learned and to delete it?")
+        print(Locale.get("do you wish to mark this word as learned and to delete it?"))
         if input(f'input "{key}": ') == key:
             Userdata.data["words_learned"] += 1
             menu_parser.prepare(f"del {en_word}")
@@ -105,6 +105,12 @@ def ok_com(*args):
 def now_com():
     print(qu_datetime.now())
     learn_parser.set_result("ask_input_again", "from now")
+
+@learn_parser.method("reload", 0)
+def reload_com():
+    menu_parser.prepare("reload")
+    print(Locale.get("resources are reloaded"))
+    learn_parser.set_result("ask_input_again", "from reload")
 
 def should_to_repeat_this_word(word_data):
     time_label = word_data["time_label"]
@@ -126,9 +132,9 @@ def run():
     cn_word_to_ln = how_much_to_learn()
 
     if cn_word_to_ln > 0:
-        print("words to learn:", cn_word_to_ln)
+        print(Locale.get("words to learn:"), cn_word_to_ln)
     else:
-        print("its nothing to repeat so far")
+        print(Locale.get("its nothing to repeat so far"))
         scene_controller.set_result("change_scene", "menu")
         return
 
@@ -151,7 +157,7 @@ def run():
             elif is_sudden_repeat_available and random.randint(1,8) == 8:
                 is_this_sudden_repeat = True
                 is_sudden_repeat_available = False
-                print("this is sudden repeatition")
+                print(Locale.get("this is sudden repeatition"))
                 libs.qu_words.show_word(en_word, word_data, to_ask_input = False)
 
             else:
@@ -166,7 +172,7 @@ def run():
                     if result_message == "empty input":
                         pass
                     else:
-                        print(result_message)
+                        print(Locale.get(result_message))
                         continue
 
                 elif result_type == "change_scene":
@@ -177,11 +183,11 @@ def run():
                     continue
 
                 else:
-                    if result_message: print(result_message)
+                    if result_message: print(Locale.get(result_message))
 
                 break
 
         cn_word_to_ln = how_much_to_learn()
 
-    print("words are over")
+    print(Locale.get("words are over"))
     scene_controller.set_result("change_scene", "menu")
