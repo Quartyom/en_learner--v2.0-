@@ -1,5 +1,6 @@
 # организует методы и их вызов по имени и числу аргументов
 # organizes methods and call them by their name, args count
+# _[method_name] is hidden, can only be called from execute(), not prepare()
 # methods execution result is in get_result()
 # keep temporary(!) data in  _method_to_method_data (unsafe)
 
@@ -61,8 +62,11 @@ class Qu_parse:
         inp = inp_str.strip().split()
 
         if inp:
-            self.execute(inp[0], *inp[1::])
-            if not self._result[0]: self._result = "success", self._result[1]
+            if (inp[0][0] == "_"): # hidden methods
+                self.set_result("error", "method not found")
+            else:
+                self.execute(inp[0], *inp[1::])
+                if not self._result[0]: self._result = "success", self._result[1]
         else:
             self.set_result("error", "empty input")
 

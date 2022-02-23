@@ -30,7 +30,7 @@
     "maybe in the next version": "может быть, в следующей версии",
     "already exists": "уже существует",
     "you cant do it": "вы не можете так делать",
-    "input \"ok\" to accept: ": "введите \"ok\" чтобы подтвердить",
+    "input \"ok\" to accept: ": "введите \"ok\" чтобы подтвердить: ",
     "words are over": "слова кончились",
     "unavilable": "недоступно",
     "congrats, youve learned this word": "поздравляю, вы выучили это слово",
@@ -41,5 +41,6 @@
     "its nothing to repeat so far": "пока нечего повторять",
     "this is sudden repeatition": "это внезапное повторение",
     "you havent been there for ": "вас не было здесь ",
-    ", come back more often": ", возвращайтесь чаще"
+    ", come back more often": ", возвращайтесь чаще",
+    "you may use this: help" : "вы можете использовать это: help"
 }

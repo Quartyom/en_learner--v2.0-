@@ -8,21 +8,41 @@ from inits.scene_controller  import *   # run()
 from inits.scene_parsers_init import *
 from inits.userdata import *
 from inits.qu_locale_init import *
+import inits.mistakes_counter
 
 @menu_parser.method("help", 0, 1)
 def help_com(*args):
     if not args:
         print(Locale.get("commands avialable"))
+
+        commands_available_list = []
         for k in menu_parser._methods:
-            print(k)
+            if k[0] == "_": continue # hidden
+            commands_available_list.append(k)
+        print(", ".join(commands_available_list))
+
         print(Locale.get("you may also use help help"))
 
+    elif args[0] not in menu_parser._methods:
+        print(Locale.get("not found"))
+        print(Locale.get("you may use this: help"))
     else:
         locale_path = Userdata.data["locale"]
         descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}_menu.txt")
         if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}.txt")
         if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/no_description.txt")
         print(descr[:-1])
+
+@menu_parser.method("test_new")
+def test_new_word_com(*args):
+    if len(args) == 0:
+        pass
+    elif 2 <= len(args) <= 4:
+        pass
+    elif len(args) == 6:
+        pass
+    else:
+        pass
 
 @menu_parser.method("new", 2, 4)
 def new_word_com(en_word, *args):
@@ -55,6 +75,7 @@ def delete_word_com(en_word):
     else:
         menu_parser.set_result("error", "not found")
 
+@menu_parser.method("_check", 1, 2)
 def _check_word(en_word_dict, to_show_when_to_repeat = True):
     print(en_word_dict)
 
@@ -76,7 +97,8 @@ def check_word_com(en_word):
         to_show_when_to_repeat = True
 
     if en_word in Words.data:
-        _check_word(Words.data[en_word])
+        #_check_word(Words.data[en_word])
+        menu_parser.execute("_check", Words.data[en_word])
     else:
         menu_parser.set_result("error", "not found")
 
@@ -124,7 +146,8 @@ def edit_word_com(prev_en_word, new_en_word = "1", *args):
 
         new_word_attrs = libs.qu_words.add_spaces(*new_word_attrs)
         word_dict = libs.qu_words.build_word_attrs(new_word_attrs)
-        _check_word(word_dict, to_show_when_to_repeat = False)  # shows edited word in advance
+        #_check_word(word_dict, to_show_when_to_repeat = False)  # shows edited word in advance
+        menu_parser.execute("_check", word_dict, False)
 
         inp = input(Locale.get('input "ok" to accept: ')).strip()
         if inp == "ok":
@@ -218,6 +241,8 @@ def run():
                 pass
             else:
                 print(Locale.get(result_message))
+                if inits.mistakes_counter.get() % 3 == 0:
+                    print(Locale.get("you may use this: help"))
             continue
 
         # transfer data to scene controller to switch scene

@@ -7,13 +7,19 @@ from inits.scene_parsers_init import *
 from inits.qu_json_init import *
 from inits.userdata import *
 from inits.qu_locale_init import *
+import inits.mistakes_counter
 
 @learn_parser.method("help", 0, 1)
 def help_com(*args):
     if not args:
         print(Locale.get("commands avialable"))
+
+        commands_available_list = []
         for k in learn_parser._methods:
-            print(k)
+            if k[0] == "_": continue # hidden
+            commands_available_list.append(k)
+        print(", ".join(commands_available_list))
+
         print(Locale.get("you may also use help help"))
 
     else:
@@ -173,6 +179,8 @@ def run():
                         pass
                     else:
                         print(Locale.get(result_message))
+                        if inits.mistakes_counter.get() % 3 == 0:
+                            print(Locale.get("you may use this: help"))
                         continue
 
                 elif result_type == "change_scene":
