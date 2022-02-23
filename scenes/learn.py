@@ -36,23 +36,24 @@ def skip_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
     Words.data[word]["time_label"] = qu_datetime.now() + 600
     Words.save()
+    learn_parser.set_result("success", "skipped")
 
 @learn_parser.method("reset", 0)
 def reset_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
-    menu_parser.prepare(f"reset {word}")
+    menu_parser.execute("reset", word)
     learn_parser._result = menu_parser.get_result()  # learn parser should know about execution result
 
 @learn_parser.method("edit", 0, 4)
 def edit_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
-    menu_parser.prepare(f"edit {word} {' '.join(args)}")
+    menu_parser.execute("edit", word, *args)
     learn_parser._result = menu_parser.get_result()
 
 @learn_parser.method("del", 0)
 def del_com(*args):
     word, foo = learn_parser._get_method_to_method_data()
-    menu_parser.prepare(f"del {word}")
+    menu_parser.execute("del", word)
     learn_parser._result = menu_parser.get_result()
 
 @learn_parser.method("menu", 0)
@@ -85,11 +86,11 @@ def ok_com(*args):
             inp = input(Locale.get("input reset if you wish: ")).strip()
 
             if inp == "reset":
-                menu_parser.prepare(f"reset {en_word}")
+                menu_parser.execute("reset", en_word)
                 learn_parser._result = menu_parser.get_result()
             else:
                 Userdata.data["words_learned"] += 1
-                menu_parser.prepare(f"del {en_word}")
+                menu_parser.execute("del", en_word)
                 learn_parser._result = menu_parser.get_result()
 
     elif args == ("ok", "ok"):
@@ -97,7 +98,7 @@ def ok_com(*args):
         print(Locale.get("do you wish to mark this word as learned and to delete it?"))
         if input(f'input "{key}": ') == key:
             Userdata.data["words_learned"] += 1
-            menu_parser.prepare(f"del {en_word}")
+            menu_parser.execute("del", en_word)
             learn_parser._result = menu_parser.get_result()
         else:
             learn_parser.set_result("success", "cancelled")
@@ -114,7 +115,7 @@ def now_com():
 
 @learn_parser.method("reload", 0)
 def reload_com():
-    menu_parser.prepare("reload")
+    menu_parser.execute("reload")
     print(Locale.get("resources are reloaded"))
     learn_parser.set_result("ask_input_again", "from reload")
 

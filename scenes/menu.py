@@ -33,38 +33,43 @@ def help_com(*args):
         if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/no_description.txt")
         print(descr[:-1])
 
-@menu_parser.method("test_new")
-def test_new_word_com(*args):
+@menu_parser.method("new")
+def new_word_com(*args):
     if len(args) == 0:
-        pass
+        menu_parser.execute("_new_0")
     elif 2 <= len(args) <= 4:
-        pass
-    elif len(args) == 6:
-        pass
+        menu_parser.execute("_new_2_4", *args)
     else:
-        pass
+        menu_parser.set_result("error", "invalid arguments")
 
-@menu_parser.method("new", 2, 4)
-def new_word_com(en_word, *args):
+@menu_parser.method("_new_2_4", 2, 4)
+def _new_word_com_2_4(en_word, *args):
     en_word, *args = libs.qu_words.add_spaces(en_word, *args)
 
     if en_word != "0" and args[0] != "0":
-        if en_word not in Words.data:
-            if len(args) == 6: # for system call from из edit()
-                pass
-            else:
-                args = libs.qu_words.extend_args(args,3)
-                args.append(qu_datetime.now()) # for time_label
-                args.append(0) # for repeated_times
+        args = libs.qu_words.extend_args(args,3)
+        args.append(qu_datetime.now()) # for time_label
+        args.append(0) # for repeated_times
 
-            word_attrs = libs.qu_words.build_word_attrs(args)
-            Words.add(en_word, word_attrs)
+        menu_parser.execute("_new_6", en_word, *args)
 
-            menu_parser.set_result("success", "added")
-        else:
-            menu_parser.set_result("error", "already exists")
     else:
         menu_parser.set_result("error", "dodger :D")
+
+@menu_parser.method("_new_0", 0)
+def _new_word_com_0():
+    print(Locale.get("unavilable"))
+
+@menu_parser.method("_new_6", 6)
+def _new_word_com_6(en_word, *args):
+    if en_word not in Words.data:
+        word_attrs = libs.qu_words.build_word_attrs(args)
+        Words.add(en_word, word_attrs)
+
+        menu_parser.set_result("success", "added")
+    else:
+        menu_parser.set_result("error", "already exists")
+
 
 @menu_parser.method("del", 1)
 def delete_word_com(en_word):
@@ -146,13 +151,12 @@ def edit_word_com(prev_en_word, new_en_word = "1", *args):
 
         new_word_attrs = libs.qu_words.add_spaces(*new_word_attrs)
         word_dict = libs.qu_words.build_word_attrs(new_word_attrs)
-        #_check_word(word_dict, to_show_when_to_repeat = False)  # shows edited word in advance
         menu_parser.execute("_check", word_dict, False)
 
         inp = input(Locale.get('input "ok" to accept: ')).strip()
         if inp == "ok":
-            delete_word_com(prev_en_word)
-            new_word_com(new_en_word, *new_word_attrs)
+            menu_parser.execute("del", prev_en_word)
+            menu_parser.execute("_new_6", new_en_word, *new_word_attrs)
             menu_parser.set_result("success", "edited")
         else:
             menu_parser.set_result("success", "cancelled")

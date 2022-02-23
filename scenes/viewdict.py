@@ -33,13 +33,13 @@ def help_com(*args):
 @viewdict_parser.method("edit", 0, 4)
 def edit_com(*args):
     word = viewdict_parser._get_method_to_method_data()
-    menu_parser.prepare(f"edit {word} {' '.join(args)}")
+    menu_parser.execute("edit", word, *args)
     viewdict_parser._result = menu_parser.get_result() # viewdict parser should know about execution result
 
 @viewdict_parser.method("del", 0)
-def del_com(*args):
+def del_com():
     word = viewdict_parser._get_method_to_method_data()
-    menu_parser.prepare(f"del {word}")
+    menu_parser.execute("del", word)
     viewdict_parser._result = menu_parser.get_result()
 
 @viewdict_parser.method("menu", 0)
@@ -61,7 +61,7 @@ def now_com():
 
 @viewdict_parser.method("reload", 0)
 def reload_com():
-    menu_parser.prepare("reload")
+    menu_parser.execute("reload")
     print(Locale.get("resources are reloaded"))
     viewdict_parser.set_result("ask_input_again", "from reload")
 
