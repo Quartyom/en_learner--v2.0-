@@ -1,0 +1,3 @@
+deletes word from dictionary (as not learned)
+in menu: del [word]
+in learn and viewdict : del

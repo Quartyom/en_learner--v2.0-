@@ -1,0 +1,1 @@
+reloads all resources while app is executing

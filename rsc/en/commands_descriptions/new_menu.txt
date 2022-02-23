@@ -1,5 +1,5 @@
-Adds a new word in the dictionary
+adds a new word in the dictionary
 [foreign word] [translation] [transcription] [notes]
-Arguments count: from 2 to 4
-Use _ instead of spaces inside arguments
-Use 0 to skip an argument (the first two are indispensable)
+arguments count: from 2 to 4
+use _ instead of spaces inside arguments
+use 0 to skip an argument (the first two are indispensable)

@@ -1,2 +1,2 @@
-Type it if you've remembered shown word in learn mode
-Type ok ok ok if you want to delete this word like fully learnt
+type it if you've remembered shown word in learn mode
+type ok ok ok if you want to delete this word like fully learnt
