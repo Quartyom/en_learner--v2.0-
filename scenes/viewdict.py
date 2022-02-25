@@ -5,6 +5,7 @@ from inits.scene_controller import *
 from inits.scene_parsers_init import *
 from inits.qu_json_init import *
 from inits.userdata import *
+from inits.settings import *
 from inits.qu_locale_init import *
 import inits.mistakes_counter
 
@@ -21,6 +22,9 @@ def help_com(*args):
 
         print(Locale.get("you may also use help help"))
 
+    elif args[0] not in menu_parser._methods or args[0][0] == "_":
+        print(Locale.get("not found"))
+        print(Locale.get("you may use this: help"))
     else:
         locale_path = Userdata.data["locale"]
         descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}_viewdict.txt")
@@ -70,6 +74,8 @@ def run():
     print(Locale.get("words in dictionary:"), len(Words.data))
 
     current_words_list = list(Words.data.keys())
+    random.shuffle(current_words_list)
+
     for en_word in current_words_list:
 
         libs.qu_words.show_word(en_word, Words.data[en_word], to_ask_input = False)

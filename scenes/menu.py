@@ -1,12 +1,14 @@
-import os, time                         # now()
+import os, time, random                 # now()
 from libs.qu_parse import *             # menu_parser
 import libs.qu_words                    # new()
 import libs.qu_files                    # help()
 import libs.qu_datetime as qu_datetime  # new()
+from libs.words_similarity import *
 from inits.qu_json_init import *        # new()
 from inits.scene_controller  import *   # run()
 from inits.scene_parsers_init import *
 from inits.userdata import *
+from inits.settings import *
 from inits.qu_locale_init import *
 import inits.mistakes_counter
 
@@ -23,7 +25,7 @@ def help_com(*args):
 
         print(Locale.get("you may also use help help"))
 
-    elif args[0] not in menu_parser._methods:
+    elif args[0] not in menu_parser._methods or args[0][0] == "_":
         print(Locale.get("not found"))
         print(Locale.get("you may use this: help"))
     else:
@@ -40,7 +42,7 @@ def new_word_com(*args):
     elif 2 <= len(args) <= 4:
         menu_parser.execute("_new_2_4", *args)
     else:
-        menu_parser.set_result("error", "invalid arguments")
+        menu_parser.set_result("error", "invalid argument(s)")
 
 @menu_parser.method("_new_2_4", 2, 4)
 def _new_word_com_2_4(en_word, *args):
@@ -102,22 +104,31 @@ def check_word_com(en_word):
         to_show_when_to_repeat = True
 
     if en_word in Words.data:
-        #_check_word(Words.data[en_word])
         menu_parser.execute("_check", Words.data[en_word])
     else:
         menu_parser.set_result("error", "not found")
 
 @menu_parser.method("find", 1)
 def find_word_com(en_word):
-    is_any_found = False
+    recommended_to_find = Settings.get("find_words_purpose_count")
+    words_by_sequence = []
 
     for key in Words.data:
         if en_word in key:
-            print(key.replace(en_word, en_word.upper()))
-            is_any_found = True
+            words_by_sequence.append(key.replace(en_word, en_word.upper()))
 
-    if not is_any_found:
-        menu_parser.set_result("error", "not found")
+    if words_by_sequence: print(*words_by_sequence, sep = "\n")
+
+    if len(words_by_sequence) < recommended_to_find:
+        how_much_else = recommended_to_find - len(words_by_sequence)
+
+        word_by_dist = find_similar(en_word, Words.data.keys(), how_much_else)
+
+        if how_much_else - len(word_by_dist) == recommended_to_find:
+             menu_parser.set_result("error", "not found")
+             return
+
+        print(*word_by_dist, sep = "\n")
 
 @menu_parser.method("reset", 1)
 def reset_word_com(en_word):
@@ -172,8 +183,20 @@ def reload_com():
     Words.load()
     Userdata.load()
     Locale.load()
+    Settings.load()
     menu_parser.set_result("success", "resources are reloaded")
 
+@menu_parser.method("default", 0)
+def reload_com():
+    key = str(random.randint(1000,9999))
+    print(Locale.get("This action is irreversable. All application data will be set to default values"))
+    if input(f'input "{key}": ') == key:
+        Words.set_default()
+        Userdata.set_default()
+        Settings.set_default()
+        menu_parser.set_result("success", "resources are default")
+    else:
+        menu_parser.set_result("success", "cancelled")
 
 @menu_parser.method("locale", 1)
 def locale_com(arg):
@@ -190,6 +213,49 @@ def locale_com(arg):
         Userdata.save()
         Locale.load()
         menu_parser.set_result("success", "locale changed")
+
+#@menu_parser.method("multy", 1)
+#def multy_com(com_name):
+#    menu_parser.set_result("change_scene", "multy")
+
+@menu_parser.method("settings", 0, 2)
+def settings_com(*args):
+    if len(args) == 0:
+        print(Locale.get("settings available"))
+        keys = Settings.data.keys()
+        for key in keys:
+            print(f"{key} : {Settings.data[key]}")
+
+    elif len(args) == 1:
+        key = args[0]
+        if key in Settings.data:
+            print(Settings.data[key])
+        else:
+            menu_parser.set_result("error", "not found")
+    else:
+        key, new_value = args
+        if key in Settings.data:
+            old_value = Settings.get(key)
+
+            try:
+                new_value = type(old_value)(new_value)
+
+                if new_value == old_value:
+                    menu_parser.set_result("error", "edited?")
+                    return
+
+                print("the new value will be:", new_value)
+
+                inp = input(Locale.get('input "ok" to accept: ')).strip()
+                if inp == "ok":
+                    Settings.add(key, new_value)
+                    menu_parser.set_result("success", "edited")
+                else:
+                    menu_parser.set_result("success", "cancelled")
+            except:
+                menu_parser.set_result("error", "invalid argument(s)")
+        else:
+            menu_parser.set_result("error", "not found")
 
 @menu_parser.method("donate", 0)
 def donate_com(*args):

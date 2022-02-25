@@ -6,6 +6,7 @@ from inits.scene_controller import *
 from inits.scene_parsers_init import *
 from inits.qu_json_init import *
 from inits.userdata import *
+from inits.settings import *
 from inits.qu_locale_init import *
 import inits.mistakes_counter
 
@@ -22,6 +23,9 @@ def help_com(*args):
 
         print(Locale.get("you may also use help help"))
 
+    elif args[0] not in menu_parser._methods or args[0][0] == "_":
+        print(Locale.get("not found"))
+        print(Locale.get("you may use this: help"))
     else:
         locale_path = Userdata.data["locale"]
         descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/{args[0]}_learn.txt")
@@ -104,7 +108,7 @@ def ok_com(*args):
             learn_parser.set_result("success", "cancelled")
 
     else:
-        learn_parser.set_result("error", "invalid arguments")
+        learn_parser.set_result("error", "invalid argument(s)")
 
     Userdata.save()
 
@@ -161,7 +165,7 @@ def run():
                 is_sudden_repeat_available = True
                 libs.qu_words.show_word(en_word, word_data, en_word_first = random.randint(0, 1))
 
-            elif is_sudden_repeat_available and random.randint(1,8) == 8:
+            elif is_sudden_repeat_available and random.randint(1, Settings.get("sudden_repeat_chance_1_in")) == 1:
                 is_this_sudden_repeat = True
                 is_sudden_repeat_available = False
                 print(Locale.get("this is sudden repeatition"))

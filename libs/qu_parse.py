@@ -52,9 +52,11 @@ class Qu_parse:
         else:
             self.set_result("error", "method not found")
 
-
-    def set_prepare_method(self, func):
-        self.prepare = func
+    def prepare_func(self):
+        def wrap(func):
+            self.prepare = func
+            return func
+        return wrap
 
     # получает input, вызывает execute()
     def prepare(self, inp_str = None):

@@ -37,11 +37,13 @@
     "it will be deleted, if you wont reset it": "оно будет удалено, если его не сбросить",
     "input reset if you wish: ": "введите reset если желаете сбросить: ",
     "do you wish to mark this word as learned and to delete it?": "желаете пометить это слово выученным и удалить его?",
-    "invalid arguments": "неверные аргументы",
+    "invalid argument(s)": "неверный(е) аргумент(ы)",
     "its nothing to repeat so far": "пока нечего повторять",
     "this is sudden repeatition": "это внезапное повторение",
     "you havent been there for ": "вас не было здесь ",
     ", come back more often": ", возвращайтесь чаще",
     "you may use this: help": "вы можете использовать это: help",
-    "skipped" : "пропущено"
+    "skipped": "пропущено",
+    "settings available": "доступные настройки",
+    "This action is irreversable. All application data will be set to default values": "Это действие необратимо. Все данные приложения будут возвращены по умолчанию"
 }

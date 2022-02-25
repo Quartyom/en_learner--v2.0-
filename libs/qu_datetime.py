@@ -17,4 +17,4 @@ def seconds_to_form(seconds):
         return f"{seconds}sec"
 
 def form_to_seconds(days = 0, hours = 0, minutes = 0, secs = 0):
-    return ((((days) * 24 + hours) * 60 + minutes) * 60 + secs)
+    return int((((days) * 24 + hours) * 60 + minutes) * 60 + secs)

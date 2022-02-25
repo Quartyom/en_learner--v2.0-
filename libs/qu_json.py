@@ -23,6 +23,19 @@ class Qu_json:
         self.data[key] = value
         self.save()
 
+    def get(self, key):
+        return self.data[key]
+
     def delete(self, key):
         del self.data[key]
         self.save()
+
+    def set_default(self):
+        self.data = dict()
+        self.save()
+
+    def set_default_func(self):
+        def wrap(func):
+            self.set_default = func
+            return func
+        return wrap
