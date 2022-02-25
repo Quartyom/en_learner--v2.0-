@@ -1,3 +1,4 @@
+# pip install python-Levenshtein
 import libs.qu_datetime
 from inits.userdata import *
 from inits.settings import *
