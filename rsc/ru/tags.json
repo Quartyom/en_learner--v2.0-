@@ -45,5 +45,6 @@
     "you may use this: help": "вы можете использовать это: help",
     "skipped": "пропущено",
     "settings available": "доступные настройки",
-    "This action is irreversable. All application data will be set to default values": "Это действие необратимо. Все данные приложения будут возвращены по умолчанию"
+    "This action is irreversable. All application data will be set to default values": "Это действие необратимо. Все данные приложения будут возвращены по умолчанию",
+    "the new value will be:": "новое значение будет:"
 }

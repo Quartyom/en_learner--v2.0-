@@ -244,7 +244,7 @@ def settings_com(*args):
                     menu_parser.set_result("error", "edited?")
                     return
 
-                print("the new value will be:", new_value)
+                print(Locale.get("the new value will be:"), new_value)
 
                 inp = input(Locale.get('input "ok" to accept: ')).strip()
                 if inp == "ok":
