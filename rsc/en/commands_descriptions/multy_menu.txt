@@ -1,0 +1,4 @@
+multy [command name]
+opens a command in the cycled mode, so you should only use the arguments without command name
+leave empty input to quit
+use 0 if no arguments required

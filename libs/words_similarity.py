@@ -1,12 +1,6 @@
-import importlib
-try:
-    importlib.import_module("Levenshtein")
-except ImportError:
-    import pip
-    pip.main(['install', "Levenshtein"])
-finally:
-    globals()["Levenshtein"] = importlib.import_module("Levenshtein")
-
+import libs.qu_packages
+libs.qu_packages.install("Levenshtein")
+import Levenshtein
 
 def find_similar(word, words_list, how_many):
     out = []

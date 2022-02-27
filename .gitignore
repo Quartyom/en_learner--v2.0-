@@ -1,0 +1,14 @@
+
+*.pyc
+
+rsc/repetetion_intervals.json
+
+rsc/userdata.json
+
+rsc/words.json
+
+rsc/saves/
+
+планы.txt
+
+rsc/settings.json

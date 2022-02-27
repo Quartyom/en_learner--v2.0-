@@ -1,3 +1,4 @@
+import random
 import libs.qu_files
 import libs.qu_words
 import libs.qu_datetime as qu_datetime

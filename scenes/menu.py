@@ -35,14 +35,9 @@ def help_com(*args):
         if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/no_description.txt")
         print(descr[:-1])
 
-@menu_parser.method("new")
+@menu_parser.method("new", 2, 4)
 def new_word_com(*args):
-    if len(args) == 0:
-        menu_parser.execute("_new_0")
-    elif 2 <= len(args) <= 4:
-        menu_parser.execute("_new_2_4", *args)
-    else:
-        menu_parser.set_result("error", "invalid argument(s)")
+    menu_parser.execute("_new_2_4", *args)
 
 @menu_parser.method("_new_2_4", 2, 4)
 def _new_word_com_2_4(en_word, *args):
@@ -214,9 +209,17 @@ def locale_com(arg):
         Locale.load()
         menu_parser.set_result("success", "locale changed")
 
-#@menu_parser.method("multy", 1)
-#def multy_com(com_name):
-#    menu_parser.set_result("change_scene", "multy")
+@menu_parser.method("multy", 1)
+def multy_com(com_name):
+    if com_name[0] == "_":
+        menu_parser.set_result("error", "not found")
+        return
+    if com_name not in menu_parser._methods:
+        menu_parser.set_result("error", "not found")
+        return
+
+    multy_parser._set_method_to_method_data(com_name)
+    menu_parser.set_result("change_scene", "multy")
 
 @menu_parser.method("settings", 0, 2)
 def settings_com(*args):
