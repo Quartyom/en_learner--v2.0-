@@ -77,12 +77,13 @@ def ok_com(*args):
     en_word, is_this_sudden_repeat = learn_parser._get_method_to_method_data()
 
     if is_this_sudden_repeat:
-        learn_parser.set_result("error", Locale.get("unavilable"))
+        learn_parser.set_result("error", "unavilable")
         return
 
     if not args:
         Words.data[en_word]["repeated_times"] += 1
         Words.data[en_word]["time_label"] = qu_datetime.now()
+        
         # word is learnt
         if Words.data[en_word]["repeated_times"] >= len(Repetition_intervals.data):
             print(Locale.get("congrats, youve learned this word"))
@@ -110,6 +111,7 @@ def ok_com(*args):
     else:
         learn_parser.set_result("error", "invalid argument(s)")
 
+    Words.save()
     Userdata.save()
 
 @learn_parser.method("now", 0)
