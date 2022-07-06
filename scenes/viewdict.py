@@ -72,7 +72,7 @@ def reload_com():
 
 @scene_controller.method("viewdict")
 def run():
-    print(Locale.get("words in dictionary:"), len(Words.data))
+    print(Locale.get("words in the dictionary:"), len(Words.data))
 
     current_words_list = list(Words.data.keys())
     random.shuffle(current_words_list)

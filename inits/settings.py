@@ -8,6 +8,7 @@ def settings_set_default_func():
     Settings.add("inactivity_notification_days", 1.5)
     Settings.add("sudden_repeat_chance_1_in", 8)
     Settings.add("find_words_purpose_count", 3)
+
     Settings.save()
 
 

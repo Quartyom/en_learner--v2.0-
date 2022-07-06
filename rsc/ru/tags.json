@@ -11,11 +11,11 @@
     "no tags found": "не найдены тэги",
     "commands descriptions are not found": "comands descriptions не найден",
     "file no_description.txt is not found": "файл no_description.txt не найден",
-    "locale changed": "локализация изменена",
-    "method not found": "метод не найден",
+    "locale is changed": "локализация изменена",
+    "method is not found": "метод не найден",
     "words to learn:": "слов для изучения:",
     "you are in menu": "вы в меню",
-    "words in dictionary:": "слов в словаре:",
+    "words in the dictionary:": "слов в словаре:",
     "too little arguments": "слишком мало аргументов",
     "too much arguments": "слишком много аргументов",
     "dodger :D": "хитрец :D",
@@ -47,5 +47,6 @@
     "settings available": "доступные настройки",
     "This action is irreversable. All application data will be set to default values": "Это действие необратимо. Все данные приложения будут возвращены по умолчанию",
     "the new value will be:": "новое значение будет:",
-    "leave input empty to quit": "оставьте ввод пустым, чтобы выйти"
+    "leave input empty to quit": "оставьте ввод пустым, чтобы выйти",
+    "words to repeat:": "слов для повторения:"
 }

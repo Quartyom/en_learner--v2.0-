@@ -35,9 +35,14 @@ def help_com(*args):
         if not descr: descr = libs.qu_files.get(f"rsc/{locale_path}/commands_descriptions/no_description.txt")
         print(descr[:-1])
 
-@menu_parser.method("new", 2, 4)
+@menu_parser.method("new", 0, 4)
 def new_word_com(*args):
-    menu_parser.execute("_new_2_4", *args)
+    if len(args) == 0:
+        menu_parser.prepare("multy new")
+    elif 2 <= len(args) <= 4:
+        menu_parser.execute("_new_2_4", *args)
+    else:
+        menu_parser.set_result("error", "invalid argument(s)")
 
 @menu_parser.method("_new_2_4", 2, 4)
 def _new_word_com_2_4(en_word, *args):
@@ -53,10 +58,6 @@ def _new_word_com_2_4(en_word, *args):
     else:
         menu_parser.set_result("error", "dodger :D")
 
-@menu_parser.method("_new_0", 0)
-def _new_word_com_0():
-    print(Locale.get("unavilable"))
-
 @menu_parser.method("_new_6", 6)
 def _new_word_com_6(en_word, *args):
     if en_word not in Words.data:
@@ -70,6 +71,7 @@ def _new_word_com_6(en_word, *args):
 
 @menu_parser.method("del", 1)
 def delete_word_com(en_word):
+    en_word = libs.qu_words.add_spaces(en_word)[0]
     if en_word in Words.data:
         Words.delete(en_word)
         menu_parser.set_result("success", "deleted")
@@ -93,18 +95,17 @@ def _check_word(en_word_dict, to_show_when_to_repeat = True):
 
 @menu_parser.method("check", 1)
 def check_word_com(en_word):
-    if menu_parser._get_method_to_method_data() == "dont show repeat":
-        to_show_when_to_repeat = False
-    else:
-        to_show_when_to_repeat = True
+    en_word = libs.qu_words.add_spaces(en_word)[0]
+    to_show_when_to_repeat = menu_parser._get_method_to_method_data() != "dont show repeat"
 
     if en_word in Words.data:
-        menu_parser.execute("_check", Words.data[en_word])
+        menu_parser.execute("_check", Words.data[en_word], to_show_when_to_repeat)
     else:
         menu_parser.set_result("error", "not found")
 
 @menu_parser.method("find", 1)
 def find_word_com(en_word):
+    en_word = libs.qu_words.add_spaces(en_word)[0] # may be not required
     recommended_to_find = Settings.get("find_words_purpose_count")
     words_by_sequence = []
 
@@ -127,6 +128,7 @@ def find_word_com(en_word):
 
 @menu_parser.method("reset", 1)
 def reset_word_com(en_word):
+    en_word = libs.qu_words.add_spaces(en_word)[0]
     if en_word in Words.data:
         Words.data[en_word]["time_label"] = int(time.time())
         Words.data[en_word]["repeated_times"] = 0
@@ -137,6 +139,8 @@ def reset_word_com(en_word):
 
 @menu_parser.method("edit", 2, 5)
 def edit_word_com(prev_en_word, new_en_word = "1", *args):
+    prev_en_word, new_en_word, *args = libs.qu_words.add_spaces(prev_en_word, new_en_word, *args)
+
     if prev_en_word in Words.data:
         prev_word_dict = Words.data[prev_en_word]
         prev_word_attrs = libs.qu_words.copy_word_attrs(prev_word_dict) # listed attributes
@@ -155,7 +159,7 @@ def edit_word_com(prev_en_word, new_en_word = "1", *args):
             menu_parser.set_result("error", "edited?")
             return
 
-        new_word_attrs = libs.qu_words.add_spaces(*new_word_attrs)
+        #new_word_attrs = libs.qu_words.add_spaces(*new_word_attrs)
         word_dict = libs.qu_words.build_word_attrs(new_word_attrs)
         menu_parser.execute("_check", word_dict, False)
 
@@ -207,7 +211,7 @@ def locale_com(arg):
         Userdata.data["locale"] = arg
         Userdata.save()
         Locale.load()
-        menu_parser.set_result("success", "locale changed")
+        menu_parser.set_result("success", "locale is changed")
 
 @menu_parser.method("multy", 1)
 def multy_com(com_name):
@@ -283,11 +287,15 @@ def stats_com(*args):
     print(Locale.get("words learned:"), _data["words_learned"])
     print(Locale.get("words are being learned:"), len(Words.data))
 
-@menu_parser.method("clear", 0)
-@learn_parser.method("clear", 0)
-@viewdict_parser.method("clear", 0)
+@menu_parser.method("clean", 0)
+@learn_parser.method("clean", 0)
+@viewdict_parser.method("clean", 0)
 def clear_com():
     os.system("cls")
+
+@menu_parser.method("test1", 0)
+def test1_com():
+    print("It's allright!")
 
 @menu_parser.method("learn", 0)
 def learn_com():

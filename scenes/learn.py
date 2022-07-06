@@ -76,14 +76,14 @@ def exit_com(*args):
 def ok_com(*args):
     en_word, is_this_sudden_repeat = learn_parser._get_method_to_method_data()
 
-    if is_this_sudden_repeat:
-        learn_parser.set_result("error", "unavilable")
-        return
-
     if not args:
+        if is_this_sudden_repeat:
+            learn_parser.set_result("error", "unavilable")
+            return
+
         Words.data[en_word]["repeated_times"] += 1
         Words.data[en_word]["time_label"] = qu_datetime.now()
-        
+
         # word is learnt
         if Words.data[en_word]["repeated_times"] >= len(Repetition_intervals.data):
             print(Locale.get("congrats, youve learned this word"))
@@ -131,6 +131,7 @@ def should_to_repeat_this_word(word_data):
     span = Repetition_intervals.data[rep_times]
     return libs.qu_words.should_to_repeat(time_label, span)
 
+#@learn_parser.method("_how_much_to_learn", 0)
 def how_much_to_learn():
     words_list = list(Words.data.keys())
     result = 0
@@ -145,7 +146,7 @@ def run():
     cn_word_to_ln = how_much_to_learn()
 
     if cn_word_to_ln > 0:
-        print(Locale.get("words to learn:"), cn_word_to_ln)
+        print(Locale.get("words to repeat:"), cn_word_to_ln)
     else:
         print(Locale.get("its nothing to repeat so far"))
         scene_controller.set_result("change_scene", "menu")

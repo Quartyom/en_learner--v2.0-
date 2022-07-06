@@ -50,7 +50,7 @@ class Qu_parse:
                 func(*args)
 
         else:
-            self.set_result("error", "method not found")
+            self.set_result("error", "method is not found")
 
     def prepare_func(self):
         def wrap(func):
@@ -65,7 +65,7 @@ class Qu_parse:
 
         if inp:
             if (inp[0][0] == "_"): # hidden methods
-                self.set_result("error", "method not found")
+                self.set_result("error", "method is not found")
             else:
                 self.execute(inp[0], *inp[1::])
                 if not self._result[0]: self._result = "success", self._result[1]
