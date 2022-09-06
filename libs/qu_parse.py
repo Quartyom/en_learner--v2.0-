@@ -1,4 +1,3 @@
-# организует методы и их вызов по имени и числу аргументов
 # organizes methods and call them by their name, args count
 # _[method_name] is hidden, can only be called from execute(), not prepare()
 # methods execution result is in get_result()
@@ -31,12 +30,12 @@ class Qu_parse:
             return func
         return wrap
 
-    # ищет подходящий метод, вызывает его
+    #finds an apropriate method, calls it
     def execute(self, name, *args):
-        if name in self._methods: # есть ли метод в обработчике
+        if name in self._methods:
             func = self._methods[name]
 
-            if func in self._methods_k_args: # установлены ли ограниения на кол-во аргументов
+            if func in self._methods_k_args: # limitations for args ammount
                 limits = self._methods_k_args[func]
 
                 if len(args) < limits["k"]:
@@ -58,7 +57,7 @@ class Qu_parse:
             return func
         return wrap
 
-    # получает input, вызывает execute()
+    # gets input, calls execute()
     def prepare(self, inp_str = None):
         if not inp_str: inp_str = input(">>> ")
         inp = inp_str.strip().split()
@@ -72,7 +71,6 @@ class Qu_parse:
         else:
             self.set_result("error", "empty input")
 
-    # получить результат выполнения метода
     def get_result(self, to_save_result = False):
         outp = self._result
         if not to_save_result: self._result = str(), str()
