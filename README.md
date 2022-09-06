@@ -3,6 +3,7 @@
 <h2> Overview </h2>
 
 This app stores and manages foreign words, phrases (whatever and not only english). It helps to learn many of them simultaneously without concerning about organisation and sorting. Each word will be shown several times at increasing intervals according to <a href="https://en.wikipedia.org/wiki/Forgetting_curve">Forgetting curve</a>, increasing the chances of memorization.
+To monitor your progress, type <b>/stats</b>. You may also use this <a href = https://github.com/Quartyom/vocabulary_estimator>app</a> for vocabulary estimation
 
 <h2> Functions </h2>
 
