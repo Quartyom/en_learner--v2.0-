@@ -2,7 +2,7 @@
 
 <h2> Overview </h2>
 
-This app stores and manages foreign words, phrases (whatever and not only english). It helps to learn many of them simultaneously without concerning about organisation and sorting. Each word will be shown several times at increasing intervals according to <a href="https://daniilshat.ru/" target="_blank">Forgetting curve</a>, increasing the chances of memorization.
+This app stores and manages foreign words, phrases (whatever and not only english). It helps to learn many of them simultaneously without concerning about organisation and sorting. Each word will be shown several times at increasing intervals according to <a href="https://en.wikipedia.org/wiki/Forgetting_curve">Forgetting curve</a>, increasing the chances of memorization.
 
 <h2> Functions </h2>
 
