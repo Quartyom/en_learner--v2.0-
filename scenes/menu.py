@@ -173,6 +173,21 @@ def edit_word_com(prev_en_word, new_en_word = "1", *args):
     else:
         menu_parser.set_result("error", "not found")
 
+@menu_parser.method("merge", 0)
+def merge_com():
+    path = input("path: ").replace("\"","")
+
+    new_words = Qu_json(path)
+
+    for key in new_words.data.keys():
+        if (key not in Words.data):
+            Words.add(key, new_words.data[key])
+        else:
+            print(key + " not added")
+
+    menu_parser.set_result("success", "merged")
+
+
 @menu_parser.method("now", 0)
 def now_com():
     print(qu_datetime.now())

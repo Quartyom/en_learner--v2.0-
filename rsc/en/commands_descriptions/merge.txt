@@ -1,0 +1,2 @@
+merges defined dictionary to the current one
+unsafe!!!
